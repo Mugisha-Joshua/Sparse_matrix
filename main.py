@@ -1,8 +1,7 @@
 from sparse_matrix import SparseMatrix
+import os
 
 def main():
-    import sys
-    
     print("Choose the operation you want to perform:")
     print("1. Addition")
     print("2. Subtraction")
@@ -12,28 +11,33 @@ def main():
     
     if operation not in ['1', '2', '3']:
         print("Invalid operation. Please choose 1, 2, or 3.")
-        sys.exit(1)
+        return
     
-    matrix_file1 = input("Enter the path to the first matrix file: ").strip()
-    matrix_file2 = input("Enter the path to the second matrix file: ").strip()
+    matrix_file1 = input("Enter the name of the first matrix file (e.g., matrixfile1.txt): ").strip()
+    matrix_file2 = input("Enter the name of the second matrix file (e.g., matrixfile2.txt): ").strip()
+    result_file = input("Enter the name of the result file (e.g., result.txt): ").strip()
     
     try:
         matrix1 = SparseMatrix(matrix_file1)
         matrix2 = SparseMatrix(matrix_file2)
         
         if operation == '1':
-            result = matrix1.add(matrix2)
-            print("Result of addition:")
+            result = matrix1.add_with_padding(matrix2)
+            operation_name = "addition"
         elif operation == '2':
-            result = matrix1.subtract(matrix2)
-            print("Result of subtraction:")
+            result = matrix1.subtract_with_padding(matrix2)
+            operation_name = "subtraction"
         elif operation == '3':
             result = matrix1.multiply(matrix2)
-            print("Result of multiplication:")
+            operation_name = "multiplication"
         
-        for row in result.matrix:
-            for col in result.matrix[row]:
-                print(f"({row}, {col}, {result.get_element(row, col)})")
+        with open(result_file, 'w') as file:
+            file.write(f"Result of {operation_name}:\n")
+            for row in result.matrix:
+                for col in result.matrix[row]:
+                    file.write(f"({row}, {col}, {result.get_element(row, col)})\n")
+        
+        print(f"Result has been saved to {result_file}")
     
     except Exception as e:
         print(f"Error: {str(e)}")

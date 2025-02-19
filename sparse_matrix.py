@@ -41,6 +41,33 @@ class SparseMatrix:
             self.matrix[curr_row] = {}
         self.matrix[curr_row][curr_col] = value
 
+    def pad_matrix(self, new_rows, new_cols):
+        padded_matrix = SparseMatrix(num_rows=new_rows, num_cols=new_cols)
+        
+        for row in self.matrix:
+            for col in self.matrix[row]:
+                padded_matrix.set_element(row, col, self.get_element(row, col))
+        
+        return padded_matrix
+
+    def add_with_padding(self, other):
+        max_rows = max(self.num_rows, other.num_rows)
+        max_cols = max(self.num_cols, other.num_cols)
+        
+        padded_self = self.pad_matrix(max_rows, max_cols)
+        padded_other = other.pad_matrix(max_rows, max_cols)
+        
+        return padded_self.add(padded_other)
+    
+    def subtract_with_padding(self, other):
+        max_rows = max(self.num_rows, other.num_rows)
+        max_cols = max(self.num_cols, other.num_cols)
+        
+        padded_self = self.pad_matrix(max_rows, max_cols)
+        padded_other = other.pad_matrix(max_rows, max_cols)
+        
+        return padded_self.subtract(padded_other)
+
     def add(self, other):
         if self.num_rows != other.num_rows or self.num_cols != other.num_cols:
             raise ValueError("Matrices dimensions do not match for addition")
